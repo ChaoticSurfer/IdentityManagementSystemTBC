@@ -10,9 +10,9 @@ using Persistance;
 
 namespace Persistance.Migrations
 {
-    [DbContext(typeof(PersonDbContext))]
-    [Migration("20231108142238_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(IdentityManagementDbContext))]
+    [Migration("20231113182651_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,6 +72,30 @@ namespace Persistance.Migrations
                     b.ToTable("People");
                 });
 
+            modelBuilder.Entity("Domain.PersonRelationShip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelatedFromPersonId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelatedToPersonId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelationType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RelatedFromPersonId");
+
+                    b.HasIndex("RelatedToPersonId");
+
+                    b.ToTable("PersonRelationShips");
+                });
+
             modelBuilder.Entity("Domain.Phone", b =>
                 {
                     b.Property<int>("Id")
@@ -89,30 +113,6 @@ namespace Persistance.Migrations
                     b.ToTable("Phones");
                 });
 
-            modelBuilder.Entity("Domain.RelatedPerson", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("PersonId1")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("RelationType")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId");
-
-                    b.HasIndex("PersonId1");
-
-                    b.ToTable("RelatedPeople");
-                });
-
             modelBuilder.Entity("Domain.Person", b =>
                 {
                     b.HasOne("Domain.City", "City")
@@ -123,31 +123,31 @@ namespace Persistance.Migrations
 
                     b.HasOne("Domain.Phone", "Phone")
                         .WithMany()
-                        .HasForeignKey("PhoneId");
+                        .HasForeignKey("PhoneId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("City");
 
                     b.Navigation("Phone");
                 });
 
-            modelBuilder.Entity("Domain.RelatedPerson", b =>
+            modelBuilder.Entity("Domain.PersonRelationShip", b =>
                 {
-                    b.HasOne("Domain.Person", null)
-                        .WithMany("RelatedPeople")
-                        .HasForeignKey("PersonId")
+                    b.HasOne("Domain.Person", "RelatedFromPerson")
+                        .WithMany()
+                        .HasForeignKey("RelatedFromPersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Person", "Person")
+                    b.HasOne("Domain.Person", "RelatedToPerson")
                         .WithMany()
-                        .HasForeignKey("PersonId1");
+                        .HasForeignKey("RelatedToPersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Person");
-                });
+                    b.Navigation("RelatedFromPerson");
 
-            modelBuilder.Entity("Domain.Person", b =>
-                {
-                    b.Navigation("RelatedPeople");
+                    b.Navigation("RelatedToPerson");
                 });
 #pragma warning restore 612, 618
         }

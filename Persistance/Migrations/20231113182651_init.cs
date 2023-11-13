@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Persistance.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -64,33 +64,35 @@ namespace Persistance.Migrations
                         name: "FK_People_Phones_PhoneId",
                         column: x => x.PhoneId,
                         principalTable: "Phones",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RelatedPeople",
+                name: "PersonRelationShips",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false),
+                    RelatedFromPersonId = table.Column<int>(type: "INTEGER", nullable: false),
                     RelationType = table.Column<int>(type: "INTEGER", nullable: false),
-                    PersonId1 = table.Column<int>(type: "INTEGER", nullable: true)
+                    RelatedToPersonId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RelatedPeople", x => x.Id);
+                    table.PrimaryKey("PK_PersonRelationShips", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RelatedPeople_People_PersonId",
-                        column: x => x.PersonId,
+                        name: "FK_PersonRelationShips_People_RelatedFromPersonId",
+                        column: x => x.RelatedFromPersonId,
                         principalTable: "People",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RelatedPeople_People_PersonId1",
-                        column: x => x.PersonId1,
+                        name: "FK_PersonRelationShips_People_RelatedToPersonId",
+                        column: x => x.RelatedToPersonId,
                         principalTable: "People",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -104,20 +106,20 @@ namespace Persistance.Migrations
                 column: "PhoneId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RelatedPeople_PersonId",
-                table: "RelatedPeople",
-                column: "PersonId");
+                name: "IX_PersonRelationShips_RelatedFromPersonId",
+                table: "PersonRelationShips",
+                column: "RelatedFromPersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RelatedPeople_PersonId1",
-                table: "RelatedPeople",
-                column: "PersonId1");
+                name: "IX_PersonRelationShips_RelatedToPersonId",
+                table: "PersonRelationShips",
+                column: "RelatedToPersonId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "RelatedPeople");
+                name: "PersonRelationShips");
 
             migrationBuilder.DropTable(
                 name: "People");
