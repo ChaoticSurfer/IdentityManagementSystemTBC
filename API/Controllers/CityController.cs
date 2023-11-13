@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.DTOs.DTOtoClassConverter;
 
 namespace API.Controllers
 {
@@ -40,11 +41,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCity([FromBody] City city)
+        public async Task<IActionResult> CreateCity([FromBody] CityDto cityDto)
         {
-            if (city == null)
+            if (cityDto == null || cityDto.Name == null)
                 return BadRequest("City object is null");
 
+            var city = DTOtoCity.Convert(cityDto);
             await _cityRepository.Add(city);
             await _cityRepository.SaveChanges();
             return CreatedAtAction("GetCityById", new { id = city.Id }, city);

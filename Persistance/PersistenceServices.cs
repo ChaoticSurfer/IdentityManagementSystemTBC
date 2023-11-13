@@ -13,6 +13,7 @@ public static class PersistenceServices
     {
         collection.AddScoped<IPersonRepository, PersonRepository>();
         collection.AddScoped<ICityRepository, CityRepository>();
+        collection.AddScoped<IPhoneRepository, PhoneRepository>();
         collection.AddScoped<IImageService, ImageService>();
 
         collection.AddDbContext<IdentityManagementDbContext>(options =>
