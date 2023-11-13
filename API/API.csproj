@@ -19,5 +19,9 @@
       <ProjectReference Include="..\Persistance\Persistance.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources" />
+    </ItemGroup>
+
 
 </Project>

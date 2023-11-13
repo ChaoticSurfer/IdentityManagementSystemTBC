@@ -1,5 +1,8 @@
+using API.Middleware;
 using Application;
+using Domain.Interfaces;
 using Persistance;
+using Persistance.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +10,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-PersistenceServices.Register(builder.Services, builder.Configuration);
-ApplicationServices.Register(builder.Services);
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+ PersistenceServices.Register(builder.Services, builder.Configuration);
+ ApplicationServices.Register(builder.Services);
+
+
 
 var app = builder.Build();
 
@@ -22,9 +28,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
+app.UseMiddleware<LanguageMiddleware>();
 
-app.MapControllers();
+ app.MapControllers();
 
 app.Run();

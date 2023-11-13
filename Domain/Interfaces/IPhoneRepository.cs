@@ -2,8 +2,9 @@ namespace Domain.Interfaces;
 
 public interface IPhoneRepository
 {
-    Phone GetById(int id);
-    void Add(Phone phone);
+    Task<Phone> GetById(int id);
+    Task Add(Phone phone);
     void Update(Phone phone);
     void Delete(Phone phone);
+    Task SaveChanges();
 }

@@ -1,5 +1,7 @@
-using Application.Persistance.Contracts;
+using Application.DTOs;
+using Application.DTOs.DTOtoClassConverter;
 using Domain;
+using Domain.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,8 +35,9 @@ public class PersonController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Add(Person person)
+    public async Task<ActionResult> Add(PersonDTO personDto)
     {
+        var person = DTOtoPerson.Convert(personDto);
         var validationResult = _personValidator.Validate(person);
         if (!validationResult.IsValid)
         {
@@ -55,8 +58,7 @@ public class PersonController : ControllerBase
         {
             return BadRequest(validationResult.Errors);
         }
-
-        await _personRepository.UpdatePerson(person);
+        _personRepository.UpdatePerson(person);
         await _personRepository.Save();
 
         return this.Ok();
@@ -72,7 +74,7 @@ public class PersonController : ControllerBase
             return NotFound();
         }
 
-        await _personRepository.RemovePerson(person);
+        _personRepository.RemovePerson(person);
         await _personRepository.Save();
 
         return Ok();

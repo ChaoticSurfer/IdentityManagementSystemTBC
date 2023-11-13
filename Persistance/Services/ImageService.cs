@@ -1,22 +1,22 @@
-using Microsoft.AspNetCore.Http;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
 
-namespace Persistance;
+namespace Persistance.Services;
 
 public class ImageService : IImageService
 {
-    private readonly PersonDbContext _personDbContext;
+    private readonly IdentityManagementDbContext _identityManagementDbContext;
     private readonly string _projectRootAddresss;
 
-    public ImageService(PersonDbContext personDbContext)
+    public ImageService(IdentityManagementDbContext identityManagementDbContext)
     {
-        _personDbContext = personDbContext;
+        _identityManagementDbContext = identityManagementDbContext;
         _projectRootAddresss = GetProjectRootAddress();
     }
 
     public async Task UploadAndSetPhoto(int personId, IFormFile imageFile)
     {
-        var person = await _personDbContext.People.FindAsync(personId);
+        var person = await _identityManagementDbContext.People.FindAsync(personId);
         if (person == null) throw new ArgumentException($"Person with {nameof(personId)} - {personId} not found");
 
         if (imageFile.Length > 0)
@@ -29,7 +29,7 @@ public class ImageService : IImageService
             {
                 await imageFile.CopyToAsync(fileStream);
                 person.ImageRelativeAddress = Path.Combine(uploadsPath, uniqueFileName);
-                await _personDbContext.SaveChangesAsync();
+                await _identityManagementDbContext.SaveChangesAsync();
             }
         }
     }
